@@ -1,108 +1,9 @@
 import math
 import tkinter as tk
-import collections 
+import collections
 
-
-def bfs(start_node, adj_list):
-
-    #need to go learn how to explain this line lmao
-    visited, queue = set(), collections.deque([start_node])
-    visited.add(start_node)
-
-    while queue:
-        cur_node = queue.popleft()
-        print(str(cur_node), end = " ")
-
-        for neighbor in adj_list[cur_node]:
-            if neighbor not in visited:
-                visited.add(neighbor)
-                queue.append(neighbor)
-
-# Graph coordinate to ui coordinate
-coordinates = {
-    0: {
-        0: (50, 75),
-        1: (50, 125),
-        2: (50, 175),
-        3: (50, 225),
-        4: (50, 275),
-        5: (50, 325)
-    },
-    1: {
-        0: (95, 50),
-        1: (95, 100),
-        2: (95, 150),
-        3: (95, 200),
-        4: (95, 250),
-        5: (95, 300),
-    },
-    2: {
-        0: (140, 75),
-        1: (140, 125),
-        2: (140, 175),
-        3: (140, 225),
-        4: (140, 275),
-        5: (140, 325)
-    },
-    3: {
-        0: (185, 50),
-        1: (185, 100),
-        2: (185, 150),
-        3: (185, 200),
-        4: (185, 250),
-        5: (185, 300)
-    },
-    4: {
-        0: (230, 75),
-        1: (230, 125),
-        2: (230, 175),
-        3: (230, 225),
-        4: (230, 275),
-        5: (230, 325)
-    },
-    5: {
-        0: (275, 50),
-        1: (275, 100),
-        2: (275, 150),
-        3: (275, 200),
-        4: (275, 250),
-        5: (275, 300)
-    },
-    6: {
-        0: (320, 75),
-        1: (320, 125),
-        2: (320, 175),
-        3: (320, 225),
-        4: (320, 275),
-        5: (320, 325)
-    },
-    7: {
-        0: (365, 50),
-        1: (365, 100),
-        2: (365, 150),
-        3: (365, 200),
-        4: (365, 250),
-        5: (365, 300)
-    },
-    8: {
-        0: (410, 75),
-        1: (410, 125),
-        2: (410, 175),
-        3: (410, 225),
-        4: (410, 275),
-        5: (410, 325)
-    },
-    9: {
-        0: (455, 50),
-        1: (455, 100),
-        2: (455, 150),
-        3: (455, 200),
-        4: (455, 250),
-        5: (455, 300)
-    }
-}
-
-def draw_hexagon(canvas, x, y):
+# Define drawing functions for hexagons, legends, traps, and rewards
+def draw_hexagon(canvas, x, y, coord):
     size = 30
     points = []
     for i in range(6):
@@ -113,6 +14,7 @@ def draw_hexagon(canvas, x, y):
         points.append((point_x, point_y))
 
     canvas.create_polygon(points, outline="black", fill="#F9D89B")
+    canvas.create_text(x, y, text=coord, fill="black")
 
 def draw_legend(canvas, x, y, color):
     size = 20
@@ -128,31 +30,167 @@ def draw_legend(canvas, x, y, color):
 
 def draw_TrapText(canvas, x, y, text):
     canvas.create_text(x, y, text=text, font=("Arial", 5, "bold"), fill="black")
-    
+
 def draw_RewardText(canvas, x, y, text):
     canvas.create_text(x, y, text=text, font=("Arial", 4, "bold"), fill="black")
-    
-# Create the main window
+
+# Create tkinter window and canvas
 window = tk.Tk()
 window.title("Breadth First Search Algorithm")
-
-# Create a canvas widget
-canvas = tk.Canvas(window, width=1000, height=400, background="#AAE8AA")
+canvas = tk.Canvas(window, width=500, height=400, background="#AAE8AA")
 canvas.pack()
 
-# Print the hexagonal map
-def printMap():
-    for i in range(5):
-        for j in range(6):
-            draw_hexagon(canvas, 50 + (90 * i), 75 + (50 * j))
+# Define custom coordinates for hexagons
+custom_coords = [
+    [(1, 1), (2, 3), (3, 4), (4, 6), (5, 7), (6, 9)],
+    [(2, 1), (2, 2), (3, 3), (4, 5), (5, 6), (6, 8)],
+    [(3, 1), (3, 2), (4, 4), (5, 5), (6, 7), (7, 8)],
+    [(4, 1), (4, 2), (4, 3), (5, 4), (6, 6), (7, 7)],
+    [(5, 1), (5, 2), (5, 3), (6, 5), (7, 6), (8, 8)],
+    [(6, 1), (6, 2), (6, 3), (6, 4), (7, 5), (8, 7)],
+    [(7, 1), (7, 2), (7, 3), (7, 4), (8, 6), (9, 7)],
+    [(8, 1), (8, 2), (8, 3), (8, 4), (8, 5), (9, 6)],
+    [(9, 1), (9, 2), (9, 3), (9, 4), (9, 5), (10, 7)],
+    [(10, 1), (10, 2), (10, 3), (10, 4), (10, 5), (10, 6)]
+]
 
-    for i in range(5):
-        for j in range(6):
-            draw_hexagon(canvas, 95 + (90 * i), 50 + (50 * j))
+# Function to draw the hexagon map
+def printMap():
+    for i in range(len(custom_coords)):
+        for j in range(len(custom_coords[i])):
+            coord = f"{custom_coords[i][j][0]},{custom_coords[i][j][1]}"
+            if i % 2 == 0:
+                x = 50 + (90 * (i // 2))
+                y = 75 + (50 * j)
+            else:
+                x = 95 + (90 * (i // 2))
+                y = 50 + (50 * j)
+            draw_hexagon(canvas, x, y, coord)
 
 printMap()
 
-# Print legend and virtual world
+# BFS algorithm to find the path
+def bfs(start_node, graph):
+    visited = set()
+    queue = collections.deque([start_node])
+    path = []
+
+    while queue:
+        node = queue.popleft()
+        if node not in visited:
+            visited.add(node)
+            path.append(node)
+            if node in graph:
+                for neighbor in graph[node]:
+                    if neighbor not in visited:
+                        queue.append(neighbor)
+
+    return path
+
+# Define the graph structure
+graph = {
+    '1,1': ['2,1', '2,3'],
+    '2,1': ['3,1'],
+    '2,2': [],
+    '2,3': ['3,3', '3,4'],
+    '3,1': ['4,1', '3,2'],
+    '3,2': ['4,3'],
+    '3,3': ['4,5'],
+    '3,4': [],
+    '4,1': ['5,1'],
+    '4,2': [],
+    '4,3': ['5,2'],
+    '4,4': [],
+    '4,5': ['5,5', '5,6'],
+    '4,6': [],
+    '5,1': ['6,1', '6,2'],
+    '5,2': ['6,3'],
+    '5,3': [],
+    '5,4': [],
+    '5,5': ['6,6'],
+    '5,6': ['5,7', '6,8'],
+    '5,7': ['6,9'],
+    '6,1': ['7,1'],
+    '6,2': [],
+    '6,3': ['7,3'],
+    '6,4': [],
+    '6,5': ['7,5'],
+    '6,6': ['6,5', '7,7'],
+    '6,7': [],
+    '6,8': ['6,9', '7,8'],
+    '6,9': [],
+    '7,1': ['8,1', '8,2'],
+    '7,2': [],
+    '7,3': ['8,3', '8,4'],
+    '7,4': [],
+    '7,5': ['8,7'],
+    '7,6': [],
+    '7,7': ['8,8'],
+    '7,8': [],
+    '8,1': ['9,1'],
+    '8,2': [],
+    '8,3': [],
+    '8,4': ['9,4'],
+    '8,5': [],
+    '8,6': [],
+    '8,7': ['9,7'],
+    '8,8': [],
+    '9,1': ['10,1', '10,2'],
+    '9,2': [],
+    '9,3': [],
+    '9,4': ['10,4'],
+    '9,6': [],
+    '9,7': [],
+    '10,1': [],
+    '10,2': [],
+    '10,3': [],
+    '10,4': []
+}
+
+# Function to animate the path on the canvas
+def animate_path(canvas, path):
+    delay = 1000  # Delay between steps in milliseconds
+    for step, node in enumerate(path):
+        x, y = get_coordinates(node)
+        canvas.after(delay * step, highlight_hexagon, canvas, x, y, node, path)
+
+def highlight_hexagon(canvas, x, y, node, path):
+    size = 30
+    points = []
+    for i in range(6):
+        angle_deg = 60 * i
+        angle_rad = math.radians(angle_deg)
+        point_x = x + size * math.cos(angle_rad)
+        point_y = y + size * math.sin(angle_rad)
+        points.append((point_x, point_y))
+
+    canvas.create_polygon(points, outline="black", fill="yellow", tags="highlight")
+    canvas.update()
+    canvas.after(500)  # Keep highlighted for 500 milliseconds
+    canvas.delete("highlight")  # Remove highlight
+
+    # Print current position
+    print(f"Current position: ({node})")
+
+    # If it's the last node in the path, print the solution path
+    if node == path[-1]:
+        print(f"Solution path: ({path})")
+
+# Function to get coordinates based on custom_coords structure
+def get_coordinates(node):
+    for i in range(len(custom_coords)):
+        for j in range(len(custom_coords[i])):
+            coord = f"{custom_coords[i][j][0]},{custom_coords[i][j][1]}"
+            if coord == node:
+                if i % 2 == 0:
+                    x = 50 + (90 * (i // 2))
+                    y = 75 + (50 * j)
+                else:
+                    x = 95 + (90 * (i // 2))
+                    y = 50 + (50 * j)
+                return x, y
+
+# Draw legends, traps, and rewards on the canvas
 treasure1 = draw_legend(canvas, 185, 250, "orange")
 treasure2 = draw_legend(canvas, 230, 125, "orange")
 treasure3 = draw_legend(canvas, 365, 200, "orange")
@@ -190,103 +228,12 @@ draw_RewardText(canvas, 275, 300, "Reward 2")
 reward4 = draw_legend(canvas, 365, 150, "#4EEB4E")
 draw_RewardText(canvas, 365, 150, "Reward 2")
 
+# Execute BFS algorithm and get the path
+start_node = '1,1'
+path = bfs(start_node, graph)
 
-solution = [(0,0), (0,1), (0,2), (1,3), (2,3), (3,4), (2,3), (1,3), (0,2), (0,1), 
-            (1,2), (2,1), (3,2), (4,1), (5,2), (6,2), (7,3), (8,3), (9,3)]
+# Execute animation of the path
+animate_path(canvas, path)
 
-newsol = [(1,1), (2,1), (2,3), (3,1), (3,3), (3,4), 
-          (4,1), (3,2), (4,5), (5,1), (4,3), (5,5), 
-          (5,6), (6,1), (6,2), (5,2), (6,6), (5,7), 
-          (6,8), (7,1), (6,3), (6,5), (7,7), (6,9), 
-          (7,8), (8,1), (8,2), (7,3), (7,5), (8,8), (9,1), 
-          (8,3), (8,4), (8,7), (10,1), (10,2), (9,4), (9,7),
-          (10,3), (10,4), (10,5), (9,5), (9,6), (10,7), (10,6)]
-
-# Display capacity
-rectangle = canvas.create_rectangle(550, 80, 900, 290, outline="black", fill="#FDCFCF")
-
-# Status
-canvas.create_text(680, 150, text="\n\nCurrent Location: \n\nEnergy: \n\nStep:", fill="black", font=("Times New Roman", 14, "bold"))
-location = canvas.create_text(850, 120, fill="black", text="(0, 0)", font=("Times New Roman", 12))
-energy = canvas.create_text(863, 183, fill="black", text="0", font=("Times New Roman", 12))
-step = canvas.create_text(863, 247, fill="black", text="0", font=("Times New Roman", 12))
-
-# Initialize energy, steps and rewards
-energy_value = 0
-steps_value = 0
-reward_encounters = {}
-
-def runAnimation(solution):
-    global energy_value, steps_value, reward_encounters
-
-    def footPrint(x, y, step_index):
-        global energy_value, steps_value
-        
-        # Update energy and steps
-        if step_index < len(solution):
-            current_position = solution[step_index]
-            x, y = coordinates[current_position[0]][current_position[1]]
-    
-            # Adjust energy increment
-            if step_index >= 8 and step_index <= 18:
-                energy_increment = 0.25
-            elif step_index == 7:
-                energy_increment = 0.5
-            else:
-                energy_increment = 1
-            
-            if current_position in [(2, 3), (3, 4)]:
-                if current_position not in reward_encounters:
-                    energy_increment *= 0.5
-                    reward_encounters[current_position] = True
-                else:
-                    energy_increment *= 0.5
-    
-            energy_value += energy_increment
-            steps_value += 1
-    
-            canvas.itemconfigure(energy, text=str(round(energy_value, 2)))
-            canvas.itemconfigure(step, text=str(steps_value))
-    
-        canvas.itemconfigure(location, text=str(solution[step_index]))
-        
-        # 打印输出
-        print(f"Step {step_index}: Current Position = {solution[step_index]}")
-        print(f"Energy increment: {energy_increment}")
-    
-        # Draw footprints
-        footprint1 = canvas.create_oval(x-15, y-10, x-5, y+10, outline='black', fill="yellow")
-        footprint2 = canvas.create_oval(x, y-10, x+10, y+10, outline="black", fill="yellow")
-    
-        # Show footprints
-        canvas.itemconfigure(footprint1, state="normal")
-        canvas.itemconfigure(footprint2, state="normal")
-        window.update()
-        canvas.after(500)
-    
-        # Hide footprints
-        canvas.itemconfigure(footprint1, state="hidden")
-        canvas.itemconfigure(footprint2, state="hidden")
-        window.update()
-        canvas.after(500)
-    
-        # Show grey color footprints
-        canvas.itemconfigure(footprint1, state="normal")
-        canvas.itemconfigure(footprint2, state="normal")
-        canvas.itemconfigure(footprint1, fill="grey")
-        canvas.itemconfigure(footprint2, fill="grey")
-        window.update()
-        canvas.after(500)
-
-
-    for i in range(len(solution)):
-        graph_x = solution[i][0]
-        graph_y = solution[i][1]
-        x, y = coordinates[graph_x][graph_y]
-        footPrint(x, y, i)
-
-# Call runAnimation
-runAnimation(solution)
-
-# Start the tkinter main loop
+# Start tkinter main loop
 window.mainloop()
