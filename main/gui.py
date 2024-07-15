@@ -1,105 +1,22 @@
-import collections
-
-#might need to create func to add edges or don need cos we have set map
-
-visited = []
-queue = []  
-
-def bfs(start_node, map, visited):
-    
-    visited.append(start_node)
-    queue.append(start_node)
-
-    while queue:
-        cur_node = queue.pop(0)
-        print(cur_node + '), ', end = "(")
-
-        for neighbor in map[cur_node]:
-            if neighbor not in visited:
-                visited.append(neighbor)
-                queue.append(neighbor)
-
-
-
-def main():
-
-
-    test = {
-        #traps removed ([2,2], [4,2], [7,2], [6,7], [6,4], [9,3]
-        #walls removed ([4,6], [4,4], [5,4], [5,3], [7,6], [7,4], [8,6], [8,5], [9,2])
-        '1,1': ['2,1','2,3'],
-        '2,1': ['3,1'],
-        '2,2': [],
-        '2,3': ['3,3','3,4'],
-        '3,1': ['4,1','3,2'],
-        '3,2': ['4,3'],
-        '3,3': ['4,5'],
-        '3,4': [],  #
-        '4,1': ['5,1'],
-        '4,2': [],
-        '4,3': ['5,2'],
-        '4,4': [],
-        '4,5': ['5,5','5,6'],
-        '4,6': [],
-        '5,1': ['6,1','6,2'],
-        '5,2': ['6,3'],  #
-        '5,3': [],
-        '5,4': [],
-        '5,5': ['6,6'],  #
-        '5,6': ['5,7','6,8'],
-        '5,7': ['6,9'],  #
-        '6,1': ['7,1'],
-        '6,2': [],  #
-        '6,3': ['7,3'],
-        '6,4': [],
-        '6,5': ['7,5'],  #
-        '6,6': ['6,5','7,7'],
-        '6,7': [],
-        '6,8': ['7,8'],  #
-        '6,9': [],
-        '7,1': ['8,1','8,2'],
-        '7,2': [],
-        '7,3': ['8,3','8,4'],
-        '7,4': [],
-        '7,5': ['8,7'],
-        '7,6': [],
-        '7,7': ['8,8'],
-        '7,8': [],
-        '8,1': ['9,1'],
-        '8,2': [],  #
-        '8,3': [],  #
-        '8,4': ['9,4'],
-        '8,5': [],
-        '8,6': [],
-        '8,7': ['9,7'],
-        '8,8': [],
-        '9,1': ['10,1', '10,2'],
-        '9,2': [],
-        '9,3': [],
-        '9,4': ['10,4','10,5','9,5'],
-        '9,5': ['9,6','10,7','10,6','10,5'],
-        '9,6': [],  #
-        '9,7': [],  #
-        '10,1': [],
-        '10,2': ['10,3'],
-        '10,3': [],  #
-        '10,4': [],
-        '10,5': [],
-        '10,6': [],
-        '10,7': []
-    }
-
-
-    print("The resulting path with BFS to the treasures are: ")
-
-    bfs('1,1', test, visited)
-
-
-if __name__ == "__main__":
-    main()
-
 import math
 import tkinter as tk
+import collections 
+
+
+def bfs(start_node, adj_list):
+
+    #need to go learn how to explain this line lmao
+    visited, queue = set(), collections.deque([start_node])
+    visited.add(start_node)
+
+    while queue:
+        cur_node = queue.popleft()
+        print(str(cur_node), end = " ")
+
+        for neighbor in adj_list[cur_node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
 
 # Graph coordinate to ui coordinate
 coordinates = {
@@ -273,8 +190,17 @@ draw_RewardText(canvas, 275, 300, "Reward 2")
 reward4 = draw_legend(canvas, 365, 150, "#4EEB4E")
 draw_RewardText(canvas, 365, 150, "Reward 2")
 
+
 solution = [(0,0), (0,1), (0,2), (1,3), (2,3), (3,4), (2,3), (1,3), (0,2), (0,1), 
             (1,2), (2,1), (3,2), (4,1), (5,2), (6,2), (7,3), (8,3), (9,3)]
+
+newsol = [(1,1), (2,1), (2,3), (3,1), (3,3), (3,4), 
+          (4,1), (3,2), (4,5), (5,1), (4,3), (5,5), 
+          (5,6), (6,1), (6,2), (5,2), (6,6), (5,7), 
+          (6,8), (7,1), (6,3), (6,5), (7,7), (6,9), 
+          (7,8), (8,1), (8,2), (7,3), (7,5), (8,8), (9,1), 
+          (8,3), (8,4), (8,7), (10,1), (10,2), (9,4), (9,7),
+          (10,3), (10,4), (10,5), (9,5), (9,6), (10,7), (10,6)]
 
 # Display capacity
 rectangle = canvas.create_rectangle(550, 80, 900, 290, outline="black", fill="#FDCFCF")
