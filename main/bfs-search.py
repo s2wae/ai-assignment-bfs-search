@@ -2,29 +2,98 @@ import collections
 
 #might need to create func to add edges or don need cos we have set map
 
-def bfs(start_node, adj_list):
+visited = []
+queue = []  
 
-    #need to go learn how to explain this line lmao
-    visited, queue = set(), collections.deque([start_node])
-    visited.add(start_node)
+def bfs(start_node, map, visited):
+    
+    visited.append(start_node)
+    queue.append(start_node)
 
     while queue:
-        cur_node = queue.popleft()
-        print(str(cur_node), end = " ")
+        cur_node = queue.pop(0)
+        print(cur_node + '), ', end = "(")
 
-        for neighbor in adj_list[cur_node]:
+        for neighbor in map[cur_node]:
             if neighbor not in visited:
-                visited.add(neighbor)
+                visited.append(neighbor)
                 queue.append(neighbor)
 
 
 
 def main():
-    
-    #This part we change later and add the map
-    graph = {0: [1, 2], 1: [2], 2: [3], 3: [1, 2]}
-    print("Following is Breadth First Traversal: ")
-    bfs(0, graph)
+
+
+    test = {
+        #traps removed ([2,2], [4,2], [7,2], [6,7], [6,4], [9,3]
+        #walls removed ([4,6], [4,4], [5,4], [5,3], [7,6], [7,4], [8,6], [8,5], [9,2])
+        '1,1': ['2,1','2,3'],
+        '2,1': ['3,1'],
+        '2,2': [],
+        '2,3': ['3,3','3,4'],
+        '3,1': ['4,1','3,2'],
+        '3,2': ['4,3'],
+        '3,3': ['4,5'],
+        '3,4': [],  #
+        '4,1': ['5,1'],
+        '4,2': [],
+        '4,3': ['5,2'],
+        '4,4': [],
+        '4,5': ['5,5','5,6'],
+        '4,6': [],
+        '5,1': ['6,1','6,2'],
+        '5,2': ['6,3'],  #
+        '5,3': [],
+        '5,4': [],
+        '5,5': ['6,6'],  #
+        '5,6': ['5,7','6,8'],
+        '5,7': ['6,9'],  #
+        '6,1': ['7,1'],
+        '6,2': [],  #
+        '6,3': ['7,3'],
+        '6,4': [],
+        '6,5': ['7,5'],  #
+        '6,6': ['6,5','7,7'],
+        '6,7': [],
+        '6,8': ['7,8'],  #
+        '6,9': [],
+        '7,1': ['8,1','8,2'],
+        '7,2': [],
+        '7,3': ['8,3','8,4'],
+        '7,4': [],
+        '7,5': ['8,7'],
+        '7,6': [],
+        '7,7': ['8,8'],
+        '7,8': [],
+        '8,1': ['9,1'],
+        '8,2': [],  #
+        '8,3': [],  #
+        '8,4': ['9,4'],
+        '8,5': [],
+        '8,6': [],
+        '8,7': ['9,7'],
+        '8,8': [],
+        '9,1': ['10,1', '10,2'],
+        '9,2': [],
+        '9,3': [],
+        '9,4': ['10,4','10,5','9,5'],
+        '9,5': ['9,6','10,7','10,6','10,5'],
+        '9,6': [],  #
+        '9,7': [],  #
+        '10,1': [],
+        '10,2': ['10,3'],
+        '10,3': [],  #
+        '10,4': [],
+        '10,5': [],
+        '10,6': [],
+        '10,7': []
+    }
+
+
+    print("The resulting path with BFS to the treasures are: ")
+
+    bfs('1,1', test, visited)
+
 
 if __name__ == "__main__":
     main()
