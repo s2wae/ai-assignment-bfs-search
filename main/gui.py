@@ -174,7 +174,7 @@ def highlight_hexagon(canvas, x, y, node, path):
 
     # If it's the last node in the path, print the solution path
     if node == path[-1]:
-        print(f"Solution path: ({path})")
+        print(f"Solution path: {path}")
 
 # Function to get coordinates based on custom_coords structure
 def get_coordinates(node):
