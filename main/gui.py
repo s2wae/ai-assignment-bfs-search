@@ -147,14 +147,58 @@ graph = {
     '10,4': []
 }
 
-# Function to animate the path on the canvas
-def animate_path(canvas, path):
-    delay = 1000  # Delay between steps in milliseconds
-    for step, node in enumerate(path):
-        x, y = get_coordinates(node)
-        canvas.after(delay * step, highlight_hexagon, canvas, x, y, node, path)
+# Function to calculate energy and steps
+def calculate_energy_step(path):
+    energy = 0
+    step = 0
+    energy_increment = 1
+    step_increment = 1
 
-def highlight_hexagon(canvas, x, y, node, path):
+    energy_modifiers = {'4,5': 0.5, '5,1': 0.5}
+    step_modifiers = {'8,3': 0.5, '8,7': 0.5}
+
+    energy_history = []
+    step_history = []
+
+    for node in path:
+        energy += energy_increment
+        step += step_increment
+
+        if node in energy_modifiers:
+            energy_increment *= energy_modifiers[node]
+
+        if node in step_modifiers:
+            step_increment *= step_modifiers[node]
+
+        energy_history.append(energy)
+        step_history.append(step)
+
+    return energy_history, step_history
+
+def animate_path(canvas, path):
+    energy_history, step_history = calculate_energy_step(path)
+    delay = 1000  # Delay between steps in milliseconds
+
+    def after_animation_complete():
+        final_energy = energy_history[-1]
+        final_step = step_history[-1]
+        print(f"Final energy: {final_energy}")
+        print(f"Final step: {final_step}")
+
+    # Animation function
+    def animate_step(step, node):
+        x, y = get_coordinates(node)
+        canvas.after(delay * step, highlight_hexagon, canvas, x, y, node, path, energy_history[step], step_history[step])
+        if step == len(path) - 1:
+            # If it's the last step, call after_animation_complete after delay
+            canvas.after(delay * (step + 1), after_animation_complete)
+
+    # Start animation loop
+    for step, node in enumerate(path):
+        animate_step(step, node)
+
+    
+def highlight_hexagon(canvas, x, y, node, path, energy, step):
     size = 30
     points = []
     for i in range(6):
@@ -169,13 +213,13 @@ def highlight_hexagon(canvas, x, y, node, path):
     canvas.after(500)  # Keep highlighted for 500 milliseconds
     canvas.delete("highlight")  # Remove highlight
 
-    # Print current position
-    print(f"Current position: ({node})")
+    # Print current position, energy, and step
+    print(f"Current position: ({node}), Energy: {energy}, Step: {step}")
 
     # If it's the last node in the path, print the solution path
     if node == path[-1]:
         print(f"Solution path: {path}")
-
+    
 # Function to get coordinates based on custom_coords structure
 def get_coordinates(node):
     for i in range(len(custom_coords)):
