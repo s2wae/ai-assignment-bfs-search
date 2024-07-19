@@ -2,33 +2,24 @@ import math
 import tkinter as tk
 import collections
 
-
-visited = []
-queue = []  
-path = []
-
-# the bfs algorithm to find the path that it takes
-# path is used to input into the gui stuff
 def bfs(start_node, graph, visited):
     visited.append(start_node)
-    queue.append(start_node)
+    queue = [start_node]
     temp_path = []
 
     while queue:
-        n = queue.pop(0)  
-        temp_path.append(n)  
+        n = queue.pop(0)
+        temp_path.append(n)
         for neighbor in graph[n]:
-                if neighbor not in visited:
-                    visited.append(neighbor)
-                    queue.append(neighbor)
+            if neighbor not in visited:
+                visited.append(neighbor)
+                queue.append(neighbor)
 
     return temp_path
 
+def main(canvas):
+    print("The resulting path with BFS to the treasures are:")
 
-def main():
-    print("The resulting path with BFS to the treasures are: ")
-    
-    # Define the graph structure
     graph = {
         '1,1': ['2,1', '2,3'],
         '2,1': ['3,1'],
@@ -88,14 +79,18 @@ def main():
         '10,4': []
     }
 
-    # Execute BFS algorithm and get the path
     start_node = '1,1'
+    visited = []
     path = bfs(start_node, graph, visited)
     print(path)
     animate_path(canvas, path)
 
 
-# Define drawing functions for hexagons, legends, traps, and rewards
+window = tk.Tk()
+window.title("Breadth First Search Algorithm")
+canvas = tk.Canvas(window, width=500, height=400, background="#AAE8AA")
+canvas.pack()
+
 def draw_hexagon(canvas, x, y, coord):
     size = 30
     points = []
@@ -109,6 +104,7 @@ def draw_hexagon(canvas, x, y, coord):
     canvas.create_polygon(points, outline="black", fill="#F9D89B")
     canvas.create_text(x, y, text=coord, fill="black")
 
+
 def draw_legend(canvas, x, y, color):
     size = 20
     points = []
@@ -121,34 +117,16 @@ def draw_legend(canvas, x, y, color):
 
     return canvas.create_polygon(points, outline="black", fill=color)
 
+
 def draw_TrapText(canvas, x, y, text):
     canvas.create_text(x, y, text=text, font=("Arial", 5, "bold"), fill="black")
+
 
 def draw_RewardText(canvas, x, y, text):
     canvas.create_text(x, y, text=text, font=("Arial", 4, "bold"), fill="black")
 
-# Create tkinter window and canvas
-window = tk.Tk()
-window.title("Breadth First Search Algorithm")
-canvas = tk.Canvas(window, width=500, height=400, background="#AAE8AA")
-canvas.pack()
 
-# Define custom coordinates for hexagons
-custom_coords = [
-    [(1, 1), (2, 3), (3, 4), (4, 6), (5, 7), (6, 9)],
-    [(2, 1), (2, 2), (3, 3), (4, 5), (5, 6), (6, 8)],
-    [(3, 1), (3, 2), (4, 4), (5, 5), (6, 7), (7, 8)],
-    [(4, 1), (4, 2), (4, 3), (5, 4), (6, 6), (7, 7)],
-    [(5, 1), (5, 2), (5, 3), (6, 5), (7, 6), (8, 8)],
-    [(6, 1), (6, 2), (6, 3), (6, 4), (7, 5), (8, 7)],
-    [(7, 1), (7, 2), (7, 3), (7, 4), (8, 6), (9, 7)],
-    [(8, 1), (8, 2), (8, 3), (8, 4), (8, 5), (9, 6)],
-    [(9, 1), (9, 2), (9, 3), (9, 4), (9, 5), (10, 7)],
-    [(10, 1), (10, 2), (10, 3), (10, 4), (10, 5), (10, 6)]
-]
-
-# Function to draw the hexagon map
-def printMap():
+def printMap(canvas, custom_coords):
     for i in range(len(custom_coords)):
         for j in range(len(custom_coords[i])):
             coord = f"{custom_coords[i][j][0]},{custom_coords[i][j][1]}"
@@ -160,12 +138,7 @@ def printMap():
                 y = 50 + (50 * j)
             draw_hexagon(canvas, x, y, coord)
 
-printMap()
 
-
-
-
-# Function to calculate energy and steps
 def calculate_energy_step(path):
     energy = 0
     step = 0
@@ -193,6 +166,7 @@ def calculate_energy_step(path):
 
     return energy_history, step_history
 
+
 def animate_path(canvas, path):
     energy_history, step_history = calculate_energy_step(path)
     delay = 1000  # Delay between steps in milliseconds
@@ -203,19 +177,16 @@ def animate_path(canvas, path):
         print(f"Final energy: {final_energy}")
         print(f"Final step: {final_step}")
 
-    # Animation function
     def animate_step(step, node):
         x, y = get_coordinates(node)
         canvas.after(delay * step, highlight_hexagon, canvas, x, y, node, path, energy_history[step], step_history[step])
         if step == len(path) - 1:
-            # If it's the last step, call after_animation_complete after delay
             canvas.after(delay * (step + 1), after_animation_complete)
 
-    # Start animation loop
     for step, node in enumerate(path):
         animate_step(step, node)
 
-    
+
 def highlight_hexagon(canvas, x, y, node, path, energy, step):
     size = 30
     points = []
@@ -228,17 +199,15 @@ def highlight_hexagon(canvas, x, y, node, path, energy, step):
 
     canvas.create_polygon(points, outline="black", fill="yellow", tags="highlight")
     canvas.update()
-    canvas.after(500)  # Keep highlighted for 500 milliseconds
-    canvas.delete("highlight")  # Remove highlight
+    canvas.after(500)
+    canvas.delete("highlight")
 
-    # Print current position, energy, and step
     print(f"Current position: ({node}), Energy: {energy}, Step: {step}")
 
-    # If it's the last node in the path, print the solution path
     if node == path[-1]:
         print(f"Solution path: {path}")
-    
-# Function to get coordinates based on custom_coords structure
+
+
 def get_coordinates(node):
     for i in range(len(custom_coords)):
         for j in range(len(custom_coords[i])):
@@ -252,7 +221,21 @@ def get_coordinates(node):
                     y = 50 + (50 * j)
                 return x, y
 
-# Draw legends, traps, and rewards on the canvas
+custom_coords = [
+    [(1, 1), (2, 3), (3, 4), (4, 6), (5, 7), (6, 9)],
+    [(2, 1), (2, 2), (3, 3), (4, 5), (5, 6), (6, 8)],
+    [(3, 1), (3, 2), (4, 4), (5, 5), (6, 7), (7, 8)],
+    [(4, 1), (4, 2), (4, 3), (5, 4), (6, 6), (7, 7)],
+    [(5, 1), (5, 2), (5, 3), (6, 5), (7, 6), (8, 8)],
+    [(6, 1), (6, 2), (6, 3), (6, 4), (7, 5), (8, 7)],
+    [(7, 1), (7, 2), (7, 3), (7, 4), (8, 6), (9, 7)],
+    [(8, 1), (8, 2), (8, 3), (8, 4), (8, 5), (9, 6)],
+    [(9, 1), (9, 2), (9, 3), (9, 4), (9, 5), (10, 7)],
+    [(10, 1), (10, 2), (10, 3), (10, 4), (10, 5), (10, 6)]
+]
+
+printMap(canvas, custom_coords)
+
 treasure1 = draw_legend(canvas, 185, 250, "orange")
 treasure2 = draw_legend(canvas, 230, 125, "orange")
 treasure3 = draw_legend(canvas, 365, 200, "orange")
@@ -290,14 +273,6 @@ draw_RewardText(canvas, 275, 300, "Reward 2")
 reward4 = draw_legend(canvas, 365, 150, "#4EEB4E")
 draw_RewardText(canvas, 365, 150, "Reward 2")
 
+main(canvas)
 
-# Execute animation of the path
-#animate_path(canvas, path)
-
-# Start tkinter main loop
 window.mainloop()
-
-# just to make sure the main func is ran
-if __name__ == "__main__":
-    main()
-
