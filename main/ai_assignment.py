@@ -1,7 +1,7 @@
 import math
 import tkinter as tk
-import collections
 
+# this is the main bfs function that is used to find the solution path
 def bfs(start_node, graph, visited):
     visited.append(start_node)
     queue = [start_node]
@@ -17,6 +17,7 @@ def bfs(start_node, graph, visited):
 
     return temp_path
 
+# main function
 def main(canvas):
     print("The resulting path with BFS to the treasures are:")
 
@@ -85,12 +86,13 @@ def main(canvas):
     print(path)
     animate_path(canvas, path)
 
-
+# opens a popup window to show the algorithm working on the map
 window = tk.Tk()
 window.title("Breadth First Search Algorithm")
 canvas = tk.Canvas(window, width=500, height=400, background="#AAE8AA")
 canvas.pack()
 
+# this function  draws the hexagons on the map
 def draw_hexagon(canvas, x, y, coord):
     size = 30
     points = []
@@ -104,7 +106,7 @@ def draw_hexagon(canvas, x, y, coord):
     canvas.create_polygon(points, outline="black", fill="#F9D89B")
     canvas.create_text(x, y, text=coord, fill="black")
 
-
+# this draws the legend of the map
 def draw_legend(canvas, x, y, color):
     size = 20
     points = []
@@ -117,7 +119,7 @@ def draw_legend(canvas, x, y, color):
 
     return canvas.create_polygon(points, outline="black", fill=color)
 
-
+# this function and the draw_RewardText functions simply makes text for both trap and reward hexes
 def draw_TrapText(canvas, x, y, text):
     canvas.create_text(x, y, text=text, font=("Arial", 5, "bold"), fill="black")
 
@@ -126,6 +128,7 @@ def draw_RewardText(canvas, x, y, text):
     canvas.create_text(x, y, text=text, font=("Arial", 4, "bold"), fill="black")
 
 
+# this function is used to print the whole map for us to see
 def printMap(canvas, custom_coords):
     for i in range(len(custom_coords)):
         for j in range(len(custom_coords[i])):
@@ -139,6 +142,7 @@ def printMap(canvas, custom_coords):
             draw_hexagon(canvas, x, y, coord)
 
 
+# this function calculates the energy for every step that we take on the map
 def calculate_energy_step(path):
     energy = 0
     step = 0
@@ -166,7 +170,7 @@ def calculate_energy_step(path):
 
     return energy_history, step_history
 
-
+# this plays through the solution path that we have gotten from using the bfs function, and it shows each step we take one by one
 def animate_path(canvas, path):
     energy_history, step_history = calculate_energy_step(path)
     delay = 1000  # Delay between steps in milliseconds
@@ -187,6 +191,7 @@ def animate_path(canvas, path):
         animate_step(step, node)
 
 
+# a function to highlight the current hex that the function is on
 def highlight_hexagon(canvas, x, y, node, path, energy, step):
     size = 30
     points = []
@@ -204,6 +209,7 @@ def highlight_hexagon(canvas, x, y, node, path, energy, step):
 
     print(f"Current position: ({node}), Energy: {energy}, Step: {step}")
 
+# this function gets the coordinates for each hex
 def get_coordinates(node):
     for i in range(len(custom_coords)):
         for j in range(len(custom_coords[i])):
@@ -217,6 +223,7 @@ def get_coordinates(node):
                     y = 50 + (50 * j)
                 return x, y
 
+# the hex coordinates
 custom_coords = [
     [(1, 1), (2, 3), (3, 4), (4, 6), (5, 7), (6, 9)],
     [(2, 1), (2, 2), (3, 3), (4, 5), (5, 6), (6, 8)],
@@ -230,6 +237,7 @@ custom_coords = [
     [(10, 1), (10, 2), (10, 3), (10, 4), (10, 5), (10, 6)]
 ]
 
+# the code below is to draw the whole map out
 printMap(canvas, custom_coords)
 
 treasure1 = draw_legend(canvas, 185, 250, "orange")
