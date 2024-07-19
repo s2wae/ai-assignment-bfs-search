@@ -161,7 +161,6 @@ def main(canvas):
     visited = []
     path = bfs(start_node, graph, visited)
     print(path)
-    animate_path(canvas, path)
 
     print("These are the shortest paths from the treasure nodes to the start node:")
     path1 = bfs_path('5,2', 'START', graph_previous)
@@ -180,6 +179,7 @@ def main(canvas):
     print("Finalizing the shortest path to find all treasure nodes would be: ")
     final_path = p2reverse + path2 + p4reverse
     print(final_path)
+    animate_path(canvas, final_path)
 
 
 # opens a popup window to show the algorithm working on the map
