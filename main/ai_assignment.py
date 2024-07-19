@@ -1,6 +1,9 @@
 import math
 import tkinter as tk
 
+
+# treasure nodes: 5,2  6,6  8,4  10,4  
+
 # this is the main bfs function that is used to find the solution path
 def bfs(start_node, graph, visited):
     visited.append(start_node)
@@ -17,9 +20,83 @@ def bfs(start_node, graph, visited):
 
     return temp_path
 
+# this function is used to find the shortest path between two nodes, typically a treasure node and the start node or another treasure node
+def bfs_path(source_node, destination, graph_previous):
+    final_path = []
+    final_path.append(source_node)
+
+
+    while final_path[-1] != destination:
+
+        temp = final_path[-1]
+        test = graph_previous[temp]
+        test = ''.join(test)
+        final_path.append(test)
+        
+    final_path.pop(-1)
+    return final_path
+
 # main function
 def main(canvas):
-    print("The resulting path with BFS to the treasures are:")
+
+    graph_previous = {
+        '1,1': ['START'],
+        '2,1': ['1,1'],
+        '2,2': [],
+        '2,3': ['1,1'],
+        '3,1': ['2,1'],
+        '3,2': ['3,1'],
+        '3,3': ['2,3'],
+        '3,4': ['2,3'],
+        '4,1': ['3,1'],
+        '4,2': [],
+        '4,3': ['3,2'],
+        '4,4': [],
+        '4,5': ['3,3'],
+        '4,6': [],
+        '5,1': ['4,1'],
+        '5,2': ['4,3'],
+        '5,3': [],
+        '5,4': [],
+        '5,5': ['4,5'],
+        '5,6': ['4,5'],
+        '5,7': ['5,6'],
+        '6,1': ['5,1'],
+        '6,2': ['5,1'],
+        '6,3': ['5,2'],
+        '6,4': [],
+        '6,5': ['6,6'],
+        '6,6': ['5,5'],
+        '6,7': [],
+        '6,8': ['5,6'],
+        '6,9': ['5,7'],
+        '7,1': ['6,1'],
+        '7,2': [],
+        '7,3': ['6,3'],
+        '7,4': [],
+        '7,5': ['6,5'],
+        '7,6': [],
+        '7,7': ['6,6'],
+        '7,8': ['6,8'],
+        '8,1': ['7,1'],
+        '8,2': ['7,1'],
+        '8,3': ['7,3'],
+        '8,4': ['7,3'],
+        '8,5': [],
+        '8,6': [],
+        '8,7': ['7,5'],
+        '8,8': ['7,7'],
+        '9,1': ['8,1'],
+        '9,2': [],
+        '9,3': [],
+        '9,4': ['8,4'],
+        '9,6': [],
+        '9,7': ['8,7'],
+        '10,1': ['9,1'],
+        '10,2': ['9,1'],
+        '10,3': ['10,2'],
+        '10,4': ['9,4']
+    }
 
     graph = {
         '1,1': ['2,1', '2,3'],
@@ -79,12 +156,31 @@ def main(canvas):
         '10,3': [],
         '10,4': []
     }
-
+    print("These are all the nodes the bfs visits to find all treasure nodes")
     start_node = '1,1'
     visited = []
     path = bfs(start_node, graph, visited)
     print(path)
     animate_path(canvas, path)
+
+    print("These are the shortest paths from the treasure nodes to the start node:")
+    path1 = bfs_path('5,2', 'START', graph_previous)
+    path2 = bfs_path('6,6', 'START', graph_previous)
+    path3 = bfs_path('8,4', 'START', graph_previous)
+    path4 = bfs_path('10,4', 'START', graph_previous)
+    print(path1)
+    print(path2)
+    print(path3)
+    print(path4)
+
+    p2reverse = path2[::-1]
+    p4reverse = path4[::-1]
+    p2reverse.pop()
+    p4reverse.pop(0)
+    print("Finalizing the shortest path to find all treasure nodes would be: ")
+    final_path = p2reverse + path2 + p4reverse
+    print(final_path)
+
 
 # opens a popup window to show the algorithm working on the map
 window = tk.Tk()
