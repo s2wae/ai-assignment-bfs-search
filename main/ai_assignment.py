@@ -21,7 +21,7 @@ def bfs(start_node, graph, visited):
     return temp_path
 
 # this function is used to find the shortest path between two nodes, typically a treasure node and the start node or another treasure node
-def bfs_path(source_node, destination, graph_previous):
+def bfs_path(source_node, destination, parent_node):
     final_path = []
     final_path.append(source_node)
 
@@ -29,7 +29,7 @@ def bfs_path(source_node, destination, graph_previous):
     while final_path[-1] != destination:
 
         temp = final_path[-1]
-        test = graph_previous[temp]
+        test = parent_node[temp]
         test = ''.join(test)
         final_path.append(test)
         
@@ -39,7 +39,8 @@ def bfs_path(source_node, destination, graph_previous):
 # main function
 def main(canvas):
 
-    graph_previous = {
+    # the coordinates of the parent node of each node
+    parent_node = {
         '1,1': ['START'],
         '2,1': ['1,1'],
         '2,2': [],
@@ -98,6 +99,7 @@ def main(canvas):
         '10,4': ['9,4']
     }
 
+    # the coordinates of each child node that a node connects to
     graph = {
         '1,1': ['2,1', '2,3'],
         '2,1': ['3,1'],
@@ -156,6 +158,7 @@ def main(canvas):
         '10,3': [],
         '10,4': []
     }
+
     print("These are all the nodes the bfs visits to find all treasure nodes")
     start_node = '1,1'
     visited = []
@@ -163,15 +166,16 @@ def main(canvas):
     print(path)
 
     print("These are the shortest paths from the treasure nodes to the start node:")
-    path1 = bfs_path('5,2', 'START', graph_previous)
-    path2 = bfs_path('6,6', 'START', graph_previous)
-    path3 = bfs_path('8,4', 'START', graph_previous)
-    path4 = bfs_path('10,4', 'START', graph_previous)
+    path1 = bfs_path('5,2', 'START', parent_node)
+    path2 = bfs_path('6,6', 'START', parent_node)
+    path3 = bfs_path('8,4', 'START', parent_node)
+    path4 = bfs_path('10,4', 'START', parent_node)
     print(path1)
     print(path2)
     print(path3)
     print(path4)
 
+    # this part is to finalize the path to all treasure nodes, removing any duplicate nodes and putting the paths in order
     p2reverse = path2[::-1]
     p4reverse = path4[::-1]
     p2reverse.pop()
