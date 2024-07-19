@@ -204,10 +204,6 @@ def highlight_hexagon(canvas, x, y, node, path, energy, step):
 
     print(f"Current position: ({node}), Energy: {energy}, Step: {step}")
 
-    if node == path[-1]:
-        print(f"Solution path: {path}")
-
-
 def get_coordinates(node):
     for i in range(len(custom_coords)):
         for j in range(len(custom_coords[i])):
