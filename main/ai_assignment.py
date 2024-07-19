@@ -142,7 +142,7 @@ def printMap(canvas, custom_coords):
             draw_hexagon(canvas, x, y, coord)
 
 
-# this function calculates the energy for every step that we take on the map
+# this function calculates the energy and step count that we take on the map
 def calculate_energy_step(path):
     energy = 0
     step = 0
