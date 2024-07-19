@@ -142,7 +142,7 @@ def printMap(canvas, custom_coords):
             draw_hexagon(canvas, x, y, coord)
 
 
-# this function calculates the energy and step count that we take on the map
+# this function calculates the energy and step count that we take through the path that we have gotten from the bfs algorithm
 def calculate_energy_step(path):
     energy = 0
     step = 0
